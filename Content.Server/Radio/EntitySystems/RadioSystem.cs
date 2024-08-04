@@ -37,12 +37,18 @@ public sealed class RadioSystem : EntitySystem
 
     private readonly Dictionary<string, string[]> _departments = new Dictionary<string, string[]>
     {
-        // сб
-        { "ff0000", ["security", "officer", "cadet"] },
-        // командование
-        { "ffff00", ["command", "captain"] },
-        // инженерный
-        { "ff6f00", ["engineer"] }
+        // Cargo
+        { "A46106", ["cargo"] },
+        // Civilian
+        { "9FED58", ["civilian"] },
+        // Engineering
+        { "EFB341", ["engineering"] },
+        // Medical
+        { "52B4E9", ["medical", "врач", "лечит"] },
+        // Security
+        { "DE3A3A", ["security", "hos", "warden", "detective", "officer", "cadet"] },
+        // Science
+        { "D381C9", ["science"] }
     };
     public override void Initialize()
     {
@@ -199,7 +205,9 @@ public sealed class RadioSystem : EntitySystem
             string color = department.Key;
             foreach (string word in department.Value)
             {
-                Regex regex = new Regex($@"\w*{word}\w*", RegexOptions.IgnoreCase);
+                string redex_word = RedexWord(word);
+
+                Regex regex = new Regex($@"\w*{redex_word}\w*", RegexOptions.IgnoreCase);
                 MatchCollection matches = regex.Matches(msg);
 
                 foreach (Match match in matches)
@@ -209,5 +217,23 @@ public sealed class RadioSystem : EntitySystem
             }
         }
         return msg;
+    }
+
+    public string RedexWord(string word)
+    {
+        string redex_word = "";
+        foreach (char letter in word)
+        {
+            string add_letter = letter.ToString();
+            if (letter == 'л')
+                add_letter = "[лв]";
+            if (letter == 'р')
+                add_letter = "[рв]";
+            if (letter == 'ы')
+                add_letter = "[иы]";
+            redex_word += add_letter + "+";
+        }
+
+        return redex_word.Remove(redex_word.Length - 1);
     }
 }
