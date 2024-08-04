@@ -196,7 +196,7 @@ public sealed class RadioSystem : EntitySystem
             Array.Copy(department.Value, 1, dictionary, 0, department.Value.Length - 1);
             foreach (string word in dictionary)
             {
-                msg.Replace(word, "[color=$" + color + "]" + "[/color]");
+                msg = msg.Replace(word, "[color=#" + color + "]" + word + "[/color]");
             }
         }
         return msg;
