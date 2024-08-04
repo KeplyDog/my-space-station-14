@@ -33,6 +33,15 @@ public sealed class RadioSystem : EntitySystem
     // set used to prevent radio feedback loops.
     private readonly HashSet<string> _messages = new();
 
+    private readonly Dictionary<string, string[]> _departments = new Dictionary<string, string[]>
+    {
+        // сб
+        { "ff0000", ["security", "officer", "cadet"] },
+        // командование
+        { "ffff00", ["command", "captain"] },
+        // инженерный
+        { "ff6f00", ["engineer"] }
+    };
     public override void Initialize()
     {
         base.Initialize();
@@ -182,19 +191,11 @@ public sealed class RadioSystem : EntitySystem
 
     public string Highlighting(string msg)
     {
-        var departments = new Dictionary<string, string[]>
-        {
-            { "security", ["ff0000", "security", "officer", "cadet"] },
-            { "command", ["ffff00", "command", "captain"] },
-            { "engineering", ["ff6f00", "engineer"] }
-        };
 
-        foreach (var department in departments)
+        foreach (var department in _departments)
         {
-            string color = department.Value[0];
-            string[] dictionary = new string[department.Value.Length - 1];
-            Array.Copy(department.Value, 1, dictionary, 0, department.Value.Length - 1);
-            foreach (string word in dictionary)
+            string color = department.Key;
+            foreach (string word in department.Value)
             {
                 msg = msg.Replace(word, "[color=#" + color + "]" + word + "[/color]");
             }
