@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 using Content.Server.Administration.Logs;
 using Content.Server.Chat.Systems;
 using Content.Server.Power.Components;
@@ -197,7 +199,13 @@ public sealed class RadioSystem : EntitySystem
             string color = department.Key;
             foreach (string word in department.Value)
             {
-                msg = msg.Replace(word, "[color=#" + color + "]" + word + "[/color]");
+                Regex regex = new Regex($@"\w*{word}\w*", RegexOptions.IgnoreCase);
+                MatchCollection matches = regex.Matches(msg);
+
+                foreach (Match match in matches)
+                {
+                    msg = msg.Replace(match.Value, "[color=#" + color + "]" + match.Value + "[/color]");
+                }
             }
         }
         return msg;
