@@ -95,6 +95,8 @@ public sealed class RadioSystem : EntitySystem
             ? FormattedMessage.EscapeText(message)
             : message;
 
+        content = Highlighting(content);
+
         var wrappedMessage = Loc.GetString(speech.Bold ? "chat-radio-message-wrap-bold" : "chat-radio-message-wrap",
             ("color", channel.Color),
             ("fontType", speech.FontId),
@@ -176,5 +178,27 @@ public sealed class RadioSystem : EntitySystem
             }
         }
         return false;
+    }
+
+    public string Highlighting(string msg)
+    {
+        var departments = new Dictionary<string, string[]>
+        {
+            { "security", ["ff0000", "security", "officer", "cadet"] },
+            { "command", ["ffff00", "command", "captain"] },
+            { "engineering", ["ff6f00", "engineer"] }
+        };
+
+        foreach (var department in departments)
+        {
+            string color = department.Value[0];
+            string[] dictionary = new string[department.Value.Length - 1];
+            Array.Copy(department.Value, 1, dictionary, 0, department.Value.Length - 1);
+            foreach (string word in dictionary)
+            {
+                msg.Replace(word, "[color=$" + color + "]" + "[/color]");
+            }
+        }
+        return msg;
     }
 }
